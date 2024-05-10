@@ -1,0 +1,118 @@
+
+
+import pickle
+
+class Movie:
+    def __init__(self, title, seats_available):
+        self.title = title
+        self.seats_available = seats_available
+        self.bookings = []
+
+    def book_seat(self, seat_number):
+        if seat_number in self.seats_available:
+            self.seats_available.remove(seat_number)
+            self.bookings.append(seat_number)
+            return True
+        return False
+
+class Screen:
+    def __init__(self, screen_number):
+        self.screen_number = screen_number
+        self.timeslots = []
+
+    def add_timeslot(self, timeslot):
+        self.timeslots.append(timeslot)
+
+class Timeslot:
+    def __init__(self, start_time, end_time):
+        self.start_time = start_time
+        self.end_time = end_time
+        self.movie = None
+
+    def set_movie(self, movie):
+        self.movie = movie
+
+class BookingDetails:
+    def __init__(self, user, movie, screen, timeslot, seat_number):
+        self.user = user
+        self.movie = movie
+        self.screen = screen
+        self.timeslot = timeslot
+        self.seat_number = seat_number
+        self.booking_id = generate_booking_id()
+
+    def __str__(self):
+        return f"Booking ID: {self.booking_id}\nMovie: {self.movie.title}\nScreen: {self.screen.screen_number}\nTimeslot: {self.timeslot.start_time} - {self.timeslot.end_time}\nSeat Number: {self.seat_number}"
+
+def generate_booking_id():
+    # generate a unique booking ID
+    return "BK" + str(hash((id(self), time.time())))
+
+class User:
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+        self.bookings = []
+
+    def register(self):
+        # register user and store in pickle file
+        with open("users.pkl", "ab") as f:
+            pickle.dump(self, f)
+
+    def login(self):
+        # login user and retrieve from pickle file
+        with open("users.pkl", "rb") as f:
+            users = pickle.load(f)
+            for user in users:
+                if user.username == self.username and user.password == self.password:
+                    return True
+        return False
+
+    def book_movie(self, movie, screen, timeslot, seat_number):
+        booking_details = BookingDetails(self, movie, screen, timeslot, seat_number)
+        self.bookings.append(booking_details)
+        return booking_details
+
+class Administrator:
+    def __init__(self):
+        self.movies = []
+        self.screens = []
+
+    def add_movie(self, movie):
+        self.movies.append(movie)
+        # store movie in pickle file
+        with open("movies.pkl", "ab") as f:
+            pickle.dump(movie, f)
+
+    def add_screen(self, screen):
+        self.screens.append(screen)
+        # store screen in pickle file
+        with open("screens.pkl", "ab") as f:
+            pickle.dump(screen, f)
+
+    def configure_system(self):
+        # load movies and screens from pickle files
+        with open("movies.pkl", "rb") as f:
+            self.movies = pickle.load(f)
+        with open("screens.pkl", "rb") as f:
+            self.screens = pickle.load(f)
+
+def main():
+    admin = Administrator()
+    admin.configure_system()
+
+    user = User("john", "password")
+    user.register()
+
+    movie = Movie("Avengers", [1, 2, 3, 4, 5])
+    screen = Screen(1)
+    timeslot = Timeslot("10:00", "12:00")
+    timeslot.set_movie(movie)
+    screen.add_timeslot(timeslot)
+
+    booking_details = user.book_movie(movie, screen, timeslot, 1)
+    print(booking_details)
+
+if __name__ == "__main__":
+    main()
+    
